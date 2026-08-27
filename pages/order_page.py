@@ -1,9 +1,10 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+
+from pages.base_page import BasePage
+
 
 # Локаторы для формы заказа.
-class OrderPage:
+class OrderPage(BasePage):
 
     NAME_INPUT = (
         By.XPATH,
@@ -80,10 +81,6 @@ class OrderPage:
         "]//div[contains(text(), 'Заказ оформлен')]"
     )
 
-    def __init__(self, driver):
-        self.driver = driver
-        self.wait = WebDriverWait(driver, 8)
-
     def fill_personal_data(
         self,
         name,
@@ -91,104 +88,56 @@ class OrderPage:
         address,
         phone
     ):
-        self.driver.find_element(
-            *self.NAME_INPUT
-        ).send_keys(name)
+        self.fill_form(self.NAME_INPUT, name)
+        self.fill_form(self.SURNAME_INPUT, surname)
+        self.fill_form(self.ADDRESS_INPUT, address)
 
-        self.driver.find_element(
-            *self.SURNAME_INPUT
-        ).send_keys(surname)
-
-        self.driver.find_element(
-            *self.ADDRESS_INPUT
-        ).send_keys(address)
-
-        self.driver.find_element(
-            *self.METRO_INPUT
-        ).click()
+        self.click_element(self.METRO_INPUT)
 
         metro_option = (
             By.CSS_SELECTOR,
             ".select-search__option"
         )
 
-        self.wait.until(
-            EC.element_to_be_clickable(metro_option)
-        ).click()
+        self.click_element(metro_option)
 
-        self.driver.find_element(
-            *self.PHONE_INPUT
-        ).send_keys(phone)
+        self.fill_form(self.PHONE_INPUT, phone)
 
     def click_next(self):
-        self.driver.find_element(
-            *self.NEXT_BUTTON
-        ).click()
+        self.click_element(self.NEXT_BUTTON)
 
     def fill_rental_data(
-            self,
-            date,
-            comment,
-            color
+        self,
+        date,
+        comment,
+        color
     ):
-        self.driver.find_element(
-            *self.DATE_INPUT
-        ).click()
+        self.click_element(self.DATE_INPUT)
 
-        self.driver.find_element(
-            *self.DATE_INPUT
-        ).send_keys(date)
+        self.fill_form(self.DATE_INPUT, date)
+        self.driver.switch_to.active_element.send_keys("\ue007")
 
-        self.driver.find_element(
-            *self.DATE_INPUT
-        ).send_keys("\ue007")
-
-        self.wait.until(
-            EC.element_to_be_clickable(
-                self.RENT_PERIOD
-            )
-        ).click()
+        self.click_element(self.RENT_PERIOD)
 
         rent_period_option = (
             By.XPATH,
             "//div[@role='option' and normalize-space()='сутки']"
         )
 
-        self.wait.until(
-            EC.visibility_of_element_located(
-                rent_period_option
-            )
-        ).click()
+        self.click_element(rent_period_option)
 
         if color == "black":
-            self.driver.find_element(
-                *self.BLACK_COLOR
-            ).click()
+            self.click_element(self.BLACK_COLOR)
         elif color == "grey":
-            self.driver.find_element(
-                *self.GREY_COLOR
-            ).click()
+            self.click_element(self.GREY_COLOR)
 
-        self.driver.find_element(
-            *self.COMMENT_INPUT
-        ).send_keys(comment)
-
+        self.fill_form(self.COMMENT_INPUT, comment)
 
     def click_order(self):
-        self.driver.find_element(
-            *self.ORDER_BUTTON
-        ).click()
+        self.click_element(self.ORDER_BUTTON)
 
     def confirm_order(self):
-        self.wait.until(
-            EC.element_to_be_clickable(
-                self.CONFIRM_ORDER_BUTTON
-            )
-        ).click()
+        self.click_element(self.CONFIRM_ORDER_BUTTON)
 
     def is_order_created(self):
-        return self.wait.until(
-            EC.visibility_of_element_located(
-                self.SUCCESS_MESSAGE
-            )
-        ).is_displayed()
+        return self.find_element(self.SUCCESS_MESSAGE).is_displayed()

@@ -14,7 +14,7 @@ class TestNavigation:
 
         main_page.click_scooter_logo()
 
-        assert driver.current_url == TestUrls.BASE_URL
+        assert main_page.get_current_url() == TestUrls.BASE_URL
 
     # Тест упадет если ввести URL: https://dzen.ru/, так как сайт реализован иначе.
     def test_yandex_logo_opens_dzen(self, driver):
@@ -22,20 +22,10 @@ class TestNavigation:
 
         main_page = MainPage(driver)
 
-        original_window = driver.current_window_handle
-        windows_before = driver.window_handles
+        original_window = main_page.get_current_window()
 
         main_page.click_yandex_logo()
-
-        WebDriverWait(driver, 8).until(
-            lambda driver:
-            len(driver.window_handles) > len(windows_before)
-        )
-
-        for window in driver.window_handles:
-            if window != original_window:
-                driver.switch_to.window(window)
-                break
+        main_page.switch_to_new_window(original_window)
 
         dzen_page = DzenPage(driver)
 

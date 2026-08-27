@@ -1,15 +1,9 @@
-from selenium.webdriver.support.ui import WebDriverWait
+from pages.base_page import BasePage
 
-# Проверка перехода на страницу дзен, после клика по логотипу Яндекса
-class DzenPage:
 
-    def __init__(self, driver):
-        self.driver = driver
-        self.wait = WebDriverWait(driver, 8)
+# Проверка перехода на страницу Дзена после клика по логотипу Яндекса
+class DzenPage(BasePage):
 
     def is_opened(self):
-        self.wait.until(
-            lambda driver: "ya.ru" in driver.current_url
-        )
-        # При клике на логотип Яндекса, в новом окне через редирект откроется не главная страница Дзена а страница Яндекс.
-        return "ya.ru" in self.driver.current_url
+        self.wait_for_url_contains("ya.ru")
+        return "ya.ru" in self.get_current_url()

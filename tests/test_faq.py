@@ -55,9 +55,9 @@ class TestFAQ:
         ],
     )
     def test_faq_questions(self, driver, question, expected_answer):
-        driver.get(TestUrls.BASE_URL)
-
         faq_page = FAQPage(driver)
+
+        faq_page.go_to(TestUrls.BASE_URL)
 
         faq_page.click_question(question)
 

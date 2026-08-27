@@ -1,9 +1,10 @@
 import pytest
+from datetime import datetime, timedelta
 
 from pages.main_page import MainPage
 from pages.order_page import OrderPage
 from urls import TestUrls
-from datetime import datetime, timedelta
+
 
 # Проверка формы оформления заказа.
 class TestOrder:
@@ -39,10 +40,10 @@ class TestOrder:
         comment,
         color,
     ):
-        driver.get(TestUrls.BASE_URL)
-
         main_page = MainPage(driver)
         order_page = OrderPage(driver)
+
+        main_page.go_to(TestUrls.BASE_URL)
 
         main_page.close_cookie_banner()
         main_page.click_order_button()
@@ -57,7 +58,7 @@ class TestOrder:
         order_page.click_next()
 
         delivery_date = (
-                datetime.now() + timedelta(days=1)
+            datetime.now() + timedelta(days=1)
         ).strftime("%d.%m.%Y")
 
         order_page.fill_rental_data(

@@ -1,3 +1,4 @@
+import allure
 from selenium.webdriver.common.by import By
 
 from pages.base_page import BasePage
@@ -5,6 +6,7 @@ from pages.base_page import BasePage
 
 class FAQPage(BasePage):
 
+    @allure.step("Получить локатор вопроса «{question_text}»")
     def get_question(self, question_text):
         return (
             By.XPATH,
@@ -12,6 +14,7 @@ class FAQPage(BasePage):
             f" and normalize-space()='{question_text}']"
         )
 
+    @allure.step("Получить локатор ответа на вопрос «{question_text}»")
     def get_answer(self, question_text):
         return (
             By.XPATH,
@@ -21,6 +24,7 @@ class FAQPage(BasePage):
             "//div[@data-accordion-component='AccordionItemPanel']"
         )
 
+    @allure.step("Открыть вопрос «{question_text}»")
     def click_question(self, question_text):
         locator = self.get_question(question_text)
         question = self.find_element(locator)
@@ -42,11 +46,14 @@ class FAQPage(BasePage):
                 question
             )
 
+    @allure.step("Проверить, что вопрос «{question_text}» раскрыт")
     def is_question_expanded(self, question_text):
         locator = self.get_question(question_text)
         question = self.find_element(locator)
+
         return question.get_attribute("aria-expanded") == "true"
 
+    @allure.step("Проверить, что ответ на вопрос «{question_text}» отображается")
     def is_answer_visible(self, question_text):
         locator = self.get_answer(question_text)
 
@@ -57,7 +64,9 @@ class FAQPage(BasePage):
         except Exception:
             return False
 
+    @allure.step("Получить текст ответа на вопрос «{question_text}»")
     def get_answer_text(self, question_text):
         locator = self.get_answer(question_text)
         answer = self.find_element(locator)
+
         return answer.text

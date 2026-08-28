@@ -1,3 +1,4 @@
+import allure
 from selenium.webdriver.common.by import By
 
 from pages.base_page import BasePage
@@ -81,6 +82,7 @@ class OrderPage(BasePage):
         "]//div[contains(text(), 'Заказ оформлен')]"
     )
 
+    @allure.step("Заполнить персональные данные: имя, фамилия, адрес и телефон")
     def fill_personal_data(
         self,
         name,
@@ -103,9 +105,11 @@ class OrderPage(BasePage):
 
         self.fill_form(self.PHONE_INPUT, phone)
 
+    @allure.step("Нажать кнопку «Далее»")
     def click_next(self):
         self.click_element(self.NEXT_BUTTON)
 
+    @allure.step("Заполнить данные аренды: дата, срок, цвет и комментарий")
     def fill_rental_data(
         self,
         date,
@@ -115,7 +119,7 @@ class OrderPage(BasePage):
         self.click_element(self.DATE_INPUT)
 
         self.fill_form(self.DATE_INPUT, date)
-        self.driver.switch_to.active_element.send_keys("\ue007")
+        self.press_enter()
 
         self.click_element(self.RENT_PERIOD)
 
@@ -133,11 +137,14 @@ class OrderPage(BasePage):
 
         self.fill_form(self.COMMENT_INPUT, comment)
 
+    @allure.step("Нажать кнопку «Заказать»")
     def click_order(self):
         self.click_element(self.ORDER_BUTTON)
 
+    @allure.step("Подтвердить оформление заказа")
     def confirm_order(self):
         self.click_element(self.CONFIRM_ORDER_BUTTON)
 
+    @allure.step("Проверить, что заказ успешно оформлен")
     def is_order_created(self):
         return self.find_element(self.SUCCESS_MESSAGE).is_displayed()

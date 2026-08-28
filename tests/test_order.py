@@ -1,9 +1,9 @@
 import pytest
-from datetime import datetime, timedelta
 
 from pages.main_page import MainPage
 from pages.order_page import OrderPage
 from urls import TestUrls
+from utils import get_delivery_date
 
 
 # Проверка формы оформления заказа.
@@ -57,9 +57,7 @@ class TestOrder:
 
         order_page.click_next()
 
-        delivery_date = (
-            datetime.now() + timedelta(days=1)
-        ).strftime("%d.%m.%Y")
+        delivery_date = get_delivery_date()
 
         order_page.fill_rental_data(
             delivery_date,

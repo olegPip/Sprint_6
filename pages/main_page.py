@@ -1,5 +1,5 @@
+import allure
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
 
 from pages.base_page import BasePage
 
@@ -13,13 +13,13 @@ class MainPage(BasePage):
     )
 
     SCOOTER_LOGO = (
-        By.CSS_SELECTOR,
-        "a.Header_LogoScooter__3lsAR"
+        By.CLASS_NAME,
+        "Header_LogoScooter__3lsAR"
     )
 
     YANDEX_LOGO = (
-        By.CSS_SELECTOR,
-        "a.Header_LogoYandex__3TSOI"
+        By.XPATH,
+        "//a[contains(@class, 'Header_LogoYandex')]"
     )
 
     COOKIE_BUTTON = (
@@ -27,33 +27,18 @@ class MainPage(BasePage):
         "rcc-confirm-button"
     )
 
+    @allure.step("Закрыть баннер с cookie")
     def close_cookie_banner(self):
         self.click_element(self.COOKIE_BUTTON)
 
+    @allure.step("Нажать кнопку «Заказать»")
     def click_order_button(self):
         self.click_element(self.ORDER_BUTTON)
 
+    @allure.step("Нажать на логотип Самоката")
     def click_scooter_logo(self):
         self.click_element(self.SCOOTER_LOGO)
 
+    @allure.step("Нажать на логотип Яндекса")
     def click_yandex_logo(self):
         self.click_element(self.YANDEX_LOGO)
-
-    def get_current_url(self):
-        return self.driver.current_url
-
-    def get_current_window(self):
-        return self.driver.current_window_handle
-
-    def get_windows(self):
-        return self.driver.window_handles
-
-    def switch_to_new_window(self, original_window):
-        WebDriverWait(self.driver, 8).until(
-            lambda driver: len(driver.window_handles) > 1
-        )
-
-        for window in self.driver.window_handles:
-            if window != original_window:
-                self.driver.switch_to.window(window)
-                break

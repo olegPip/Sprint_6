@@ -1,0 +1,72 @@
+import allure
+from selenium.webdriver.common.by import By
+
+from pages.base_page import BasePage
+
+
+class FAQPage(BasePage):
+
+    @allure.step("Получить локатор вопроса «{question_text}»")
+    def get_question(self, question_text):
+        return (
+            By.XPATH,
+            f"//div[@data-accordion-component='AccordionItemButton'"
+            f" and normalize-space()='{question_text}']"
+        )
+
+    @allure.step("Получить локатор ответа на вопрос «{question_text}»")
+    def get_answer(self, question_text):
+        return (
+            By.XPATH,
+            "//div[@data-accordion-component='AccordionItem']"
+            f"[.//div[@data-accordion-component='AccordionItemButton'"
+            f" and normalize-space()='{question_text}']]"
+            "//div[@data-accordion-component='AccordionItemPanel']"
+        )
+
+    @allure.step("Открыть вопрос «{question_text}»")
+    def click_question(self, question_text):
+        locator = self.get_question(question_text)
+        question = self.find_element(locator)
+
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block: 'center'});",
+            question
+        )
+
+        try:
+            self.wait.until(
+                lambda driver: question.is_enabled()
+                and question.is_displayed()
+            )
+            question.click()
+        except Exception:
+            self.driver.execute_script(
+                "arguments[0].click();",
+                question
+            )
+
+    @allure.step("Проверить, что вопрос «{question_text}» раскрыт")
+    def is_question_expanded(self, question_text):
+        locator = self.get_question(question_text)
+        question = self.find_element(locator)
+
+        return question.get_attribute("aria-expanded") == "true"
+
+    @allure.step("Проверить, что ответ на вопрос «{question_text}» отображается")
+    def is_answer_visible(self, question_text):
+        locator = self.get_answer(question_text)
+
+        try:
+            return self.wait.until(
+                lambda driver: self.find_element(locator).is_displayed()
+            )
+        except Exception:
+            return False
+
+    @allure.step("Получить текст ответа на вопрос «{question_text}»")
+    def get_answer_text(self, question_text):
+        locator = self.get_answer(question_text)
+        answer = self.find_element(locator)
+
+        return answer.text

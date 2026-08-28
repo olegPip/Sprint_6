@@ -1,7 +1,6 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-
 class BasePage:
 
     def __init__(self, driver):
@@ -40,7 +39,26 @@ class BasePage:
     def get_current_url(self):
         return self.driver.current_url
 
+    def get_current_window(self):
+        return self.driver.current_window_handle
+
+    def get_windows(self):
+        return self.driver.window_handles
+
+    def switch_to_new_window(self, original_window):
+        self.wait.until(
+            lambda driver: len(driver.window_handles) > 1
+        )
+
+        for window in self.driver.window_handles:
+            if window != original_window:
+                self.driver.switch_to.window(window)
+                break
+
     def wait_for_url_contains(self, text):
         self.wait.until(
             lambda driver: text in self.get_current_url()
         )
+
+    def press_enter(self):
+        self.driver.switch_to.active_element.send_keys("\ue007")
